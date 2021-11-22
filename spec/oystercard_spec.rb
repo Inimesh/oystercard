@@ -38,15 +38,32 @@ describe Oystercard do
   end
 
   describe '#touch_in' do
-    it 'sets @in_journey = true' do
-      subject.touch_in
-      expect(subject.in_journey?).to be true
+    context '@balance is >= minimum touch-in amount' do
+      before do
+        subject.top_up(rand(1..10))
+      end
+
+      it 'sets @in_journey = true' do
+        subject.touch_in
+        expect(subject.in_journey?).to be true
+      end
+    end
+
+    context '@balance < the minimum touch-in amount' do
+      before do
+        subject.deduct(rand(0..10))
+      end
+
+      it '#touch_in will throw insufficient funds error' do
+        expect { subject.touch_in }.to raise_error "insufficient funds to touch-in"
+      end
     end
   end
 
   describe '#touch_out' do
     context '@in_journey is set to true' do
       before do
+        subject.top_up(rand(1..10))
         subject.touch_in
       end
 
@@ -55,6 +72,12 @@ describe Oystercard do
         expect(subject.in_journey?).to be false
       end
       
+    end
+  end
+
+  describe '#in_journey?' do
+    it 'returns @in_journey' do
+      expect(subject.in_journey?).to be false
     end
   end
 end
