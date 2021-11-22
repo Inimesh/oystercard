@@ -5,6 +5,7 @@ class Oystercard
   def initialize(balance=0)
     @balance = balance
     @balance_limit = 90
+    @in_journey = false
   end
 
   def top_up(value)
@@ -15,5 +16,14 @@ class Oystercard
 
   def deduct(value)
     @balance -= value
+  end
+
+  def touch_in
+    @in_journey = true
+  end
+
+  # Getter methods:
+  def in_journey?
+    @in_journey
   end
 end

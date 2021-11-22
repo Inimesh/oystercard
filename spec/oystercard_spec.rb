@@ -36,4 +36,11 @@ describe Oystercard do
       expect(subject.balance).to eq -value
     end
   end
+
+  describe '#touch_in' do
+    it 'sets @in_journey? = true' do
+      subject.touch_in
+      expect(subject.in_journey?).to be true
+    end
+  end
 end
