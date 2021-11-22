@@ -3,8 +3,8 @@ require 'oystercard'
 describe Oystercard do
   describe '#balance' do
     context 'Oystercard initialized' do
-      it 'will return an empty balance' do
-        expect(subject.balance).to eq 0
+      it 'will return the balance' do
+        expect(subject.balance).to eq subject.balance
       end
 
     end
@@ -38,9 +38,23 @@ describe Oystercard do
   end
 
   describe '#touch_in' do
-    it 'sets @in_journey? = true' do
+    it 'sets @in_journey = true' do
       subject.touch_in
       expect(subject.in_journey?).to be true
+    end
+  end
+
+  describe '#touch_out' do
+    context '@in_journey is set to true' do
+      before do
+        subject.touch_in
+      end
+
+      it 'sets @in_journey = false' do
+        subject.touch_out
+        expect(subject.in_journey?).to be false
+      end
+      
     end
   end
 end
