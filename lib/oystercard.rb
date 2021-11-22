@@ -8,8 +8,12 @@ class Oystercard
   end
 
   def top_up(value)
-    # TODO: for some reason is printing out '£' character as '\xC2\xA3'
+    # TODO: for some reason it is printing out '£' character in irb as '\xC2\xA3'
     raise "balance exceeds limit of £#{@balance_limit}" if @balance + value > @balance_limit
     @balance += value
+  end
+
+  def deduct(value)
+    @balance -= value
   end
 end
