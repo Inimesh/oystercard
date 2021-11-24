@@ -1,6 +1,8 @@
 require 'oystercard'
 
 describe Oystercard do
+  let(:station) { double :entry_station }
+
   describe '#balance' do
     context 'Oystercard initialized' do
       it 'will return the balance' do
@@ -36,15 +38,20 @@ describe Oystercard do
       end
 
       it 'sets @in_journey = true' do
-        subject.touch_in
+        subject.touch_in(station)
         expect(subject.in_journey?).to be true
+      end
+
+      it 'stores the empty station' do
+        subject.touch_in(station)
+        expect(subject.entry_station).not_to be_nil
       end
     end
 
     context '@balance < the minimum touch-in amount' do
       it '#touch_in will throw insufficient funds error' do
 
-        expect { subject.touch_in }.to raise_error "insufficient funds to touch-in"
+        expect { subject.touch_in(station) }.to raise_error "insufficient funds to touch-in"
       end
     end
   end
@@ -53,7 +60,7 @@ describe Oystercard do
     context '@in_journey is set to true' do
       before do
         subject.top_up(rand(1..10))
-        subject.touch_in
+        subject.touch_in(station)
       end
 
       it 'sets @in_journey = false' do
