@@ -22,7 +22,7 @@ describe Oystercard do
 
     context '@balance above limit' do
       it 'will throw an error if final balance is above limit' do
-        balance_limit = subject.balance_limit
+        balance_limit = Oystercard::BALANCE_LIMIT
         expect { subject.top_up(balance_limit + 1) }.to raise_error("balance exceeds limit of £#{balance_limit.to_s}")
 
       end
