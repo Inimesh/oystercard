@@ -1,7 +1,8 @@
 require 'oystercard'
 
 describe Oystercard do
-  let(:station) { double :entry_station }
+  let(:entry_station) { double :entry_station }
+  let(:exit_station) { double :exit_station }
 
   describe '#balance' do
     context 'Oystercard initialized' do
@@ -38,12 +39,12 @@ describe Oystercard do
       end
 
       it 'sets @in_journey = true' do
-        subject.touch_in(station)
+        subject.touch_in(entry_station)
         expect(subject.in_journey?).to be true
       end
 
-      it 'stores the empty station' do
-        subject.touch_in(station)
+      it 'stores the empty entry station' do
+        subject.touch_in(entry_station)
         expect(subject.entry_station).not_to be_nil
       end
     end
@@ -51,7 +52,7 @@ describe Oystercard do
     context '@balance < the minimum touch-in amount' do
       it '#touch_in will throw insufficient funds error' do
 
-        expect { subject.touch_in(station) }.to raise_error "insufficient funds to touch-in"
+        expect { subject.touch_in(entry_station) }.to raise_error "insufficient funds to touch-in"
       end
     end
   end
@@ -60,17 +61,17 @@ describe Oystercard do
     context '@in_journey is set to true' do
       before do
         subject.top_up(rand(1..10))
-        subject.touch_in(station)
+        subject.touch_in(entry_station)
       end
 
       it 'sets @in_journey = false' do
-        subject.touch_out
+        subject.touch_out(exit_station)
         expect(subject.in_journey?).to be false
       end
 
       it 'deducts the minimum fare' do
         minimum_fare = Oystercard::MINIMUM_FARE
-        expect { subject.touch_out }.to change(subject, :balance).by(-minimum_fare)
+        expect { subject.touch_out(exit_station) }.to change(subject, :balance).by(-minimum_fare)
       end
     end
   end
@@ -78,6 +79,22 @@ describe Oystercard do
   describe '#in_journey?' do
     it 'returns @in_journey' do
       expect(subject.in_journey?).to be false
+    end
+  end
+
+  describe '#add_journey' do
+    context 'initialized Oystercard' do
+      it '@journeys should be empty by default' do
+        expect(subject.journeys.length).to eq 0
+      end
+    end
+    
+    context '@in_journey is set to true' do
+      it 'adds a journey to @journeys' do
+        subject.top_up(rand(1..10))
+        expect {subject.touch_in(entry_station); subject.touch_out(exit_station) }.to change { subject.journeys.length }.by(1)
+        
+      end
     end
   end
 end
