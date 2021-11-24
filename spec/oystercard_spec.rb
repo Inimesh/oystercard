@@ -1,4 +1,5 @@
 require 'oystercard'
+require 'journey'
 
 describe Oystercard do
   let(:entry_station) { double :entry_station }
@@ -88,7 +89,7 @@ describe Oystercard do
         expect(subject.journeys.length).to eq 0
       end
     end
-    
+
     context '@in_journey is set to true' do
       it 'adds a journey to @journeys' do
         subject.top_up(rand(1..10))
