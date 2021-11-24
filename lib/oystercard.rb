@@ -4,6 +4,7 @@ class Oystercard
   
   BALANCE_LIMIT = 90
   MIN_TOUCH_IN_AMOUNT = 1
+  MINIMUM_FARE = 2.80
 
   def initialize(balance=0)
     @balance = balance
@@ -16,21 +17,24 @@ class Oystercard
     @balance += value
   end
 
-  def deduct(value)
-    @balance -= value
-  end
-
+  
   def touch_in
     raise "insufficient funds to touch-in" if @balance < MIN_TOUCH_IN_AMOUNT
     @in_journey = true
   end
-
+  
   def touch_out
     @in_journey = false
+    deduct(MINIMUM_FARE)
   end
-
+  
   # Getter methods:
   def in_journey?
     @in_journey
+  end
+
+  private
+  def deduct(value)
+    @balance -= value
   end
 end

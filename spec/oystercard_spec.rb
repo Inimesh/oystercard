@@ -29,14 +29,6 @@ describe Oystercard do
     end
   end
 
-  describe '#deduct' do
-    it 'will deduct a specified amount from @balance' do
-      value = rand(1..10)
-      subject.deduct(value)
-      expect(subject.balance).to eq -value
-    end
-  end
-
   describe '#touch_in' do
     context '@balance is >= minimum touch-in amount' do
       before do
@@ -50,11 +42,8 @@ describe Oystercard do
     end
 
     context '@balance < the minimum touch-in amount' do
-      before do
-        subject.deduct(rand(0..10))
-      end
-
       it '#touch_in will throw insufficient funds error' do
+
         expect { subject.touch_in }.to raise_error "insufficient funds to touch-in"
       end
     end
@@ -71,7 +60,11 @@ describe Oystercard do
         subject.touch_out
         expect(subject.in_journey?).to be false
       end
-      
+
+      it 'deducts the minimum fare' do
+        minimum_fare = Oystercard::MINIMUM_FARE
+        expect { subject.touch_out }.to change(subject, :balance).by(-minimum_fare)
+      end
     end
   end
 
