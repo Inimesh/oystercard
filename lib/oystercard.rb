@@ -27,20 +27,12 @@ class Oystercard
   end
   
   def touch_out(exit_station)
+    finished_journey = in_journey?() ? @current_journey : Journey.new()
 
-    # Not in journey
-    if !in_journey?()
-      invalid_journey = Journey.new
-      invalid_journey.finish(exit_station)
-      deduct(invalid_journey.calc_fare)
-      add_journey(invalid_journey)
-    else
-      # is in journey
-      @current_journey.finish(exit_station)
-      deduct(@current_journey.calc_fare)
-      add_journey(@current_journey)
-      @current_journey = nil
-    end
+    finished_journey.finish(exit_station)
+    deduct(finished_journey.calc_fare)
+    add_journey(finished_journey)
+
   end
   
   # Getter methods:
@@ -55,5 +47,6 @@ class Oystercard
 
   def add_journey(journey)
     @journeys << {in: journey.entry_station, out: journey.exit_station}
+    @current_journey = nil
   end
 end
