@@ -11,6 +11,7 @@ class Journey
 
   def finish(exit_station=nil)
     @exit_station = exit_station
+    return self
   end
 
   def calc_fare

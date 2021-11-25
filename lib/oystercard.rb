@@ -1,7 +1,7 @@
 require_relative './journey.rb'
 
 class Oystercard
-  attr_reader :balance, :balance_limit, :journeys
+  attr_reader :balance, :journeys
   
   BALANCE_LIMIT = 90
   MIN_TOUCH_IN_AMOUNT = 1

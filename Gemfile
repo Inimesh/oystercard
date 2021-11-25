@@ -6,3 +6,6 @@ git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
 ruby '3.0.2'
 gem 'rspec', :group => [:development, :test]
+gem "simplecov", "~> 0.21.2"
+
+gem "simplecov-console", "~> 0.9.1"
