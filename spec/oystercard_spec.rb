@@ -1,9 +1,11 @@
 require 'oystercard'
 require 'journey'
+require 'station'
 
 describe Oystercard do
-  let(:entry_station) { double :entry_station }
-  let(:exit_station) { double :exit_station }
+  let(:journey) {instance_double(Journey)}
+  let(:entry_station) { instance_double(Station) }
+  let(:exit_station) { instance_double(Station) }
 
   describe '#balance' do
     context 'Oystercard initialized' do
@@ -35,19 +37,12 @@ describe Oystercard do
 
   describe '#touch_in' do
     context '@balance is >= minimum touch-in amount' do
-      before do
+      it 'sets @current_journey to an instance of the Journey class ' do
         subject.top_up(rand(1..10))
+        subject.touch_in(entry_station)
+        expect(subject.in_journey?).to eq true
       end
 
-      it 'sets @in_journey = true' do
-        subject.touch_in(entry_station)
-        expect(subject.in_journey?).to be true
-      end
-
-      it 'stores the empty entry station' do
-        subject.touch_in(entry_station)
-        expect(subject.entry_station).not_to be_nil
-      end
     end
 
     context '@balance < the minimum touch-in amount' do
@@ -59,27 +54,37 @@ describe Oystercard do
   end
 
   describe '#touch_out' do
-    context '@in_journey is set to true' do
-      before do
+    context '#in_journey? returns true' do
+      it 'deducts the calculated fare' do
         subject.top_up(rand(1..10))
         subject.touch_in(entry_station)
-      end
+        # subject.@current_journey = Journey.new(@entry_station = entry_station:double)
 
-      it 'sets @in_journey = false' do
-        subject.touch_out(exit_station)
-        expect(subject.in_journey?).to be false
+        expect { subject.touch_out(exit_station) }.to change(subject, :balance).by(-1)
       end
+    end
 
-      it 'deducts the minimum fare' do
-        minimum_fare = Oystercard::MINIMUM_FARE
-        expect { subject.touch_out(exit_station) }.to change(subject, :balance).by(-minimum_fare)
+    context '#in_journey? returns false' do
+      it 'deducts the penalty fare' do
+        expect { subject.touch_out(exit_station) }.to change(subject, :balance).by(-Journey::PENALTY_FARE)
       end
     end
   end
 
   describe '#in_journey?' do
-    it 'returns @in_journey' do
-      expect(subject.in_journey?).to be false
+    context 'card is not yet touched in' do
+      it 'returns false' do
+        expect(subject.in_journey?).to be false
+      end
+    end
+
+    context 'card is touched in' do
+      it 'returns true' do
+        subject.top_up(rand(1..10))
+        subject.touch_in(entry_station)
+
+        expect(subject.in_journey?).to be true
+      end
     end
   end
 
