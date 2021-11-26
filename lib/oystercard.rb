@@ -5,7 +5,6 @@ class Oystercard
   
   BALANCE_LIMIT = 90
   MIN_TOUCH_IN_AMOUNT = 1
-  MINIMUM_FARE = 2.80
 
   def initialize(balance=0)
     @balance = balance
@@ -35,7 +34,6 @@ class Oystercard
 
   end
   
-  # Getter methods:
   def in_journey?
     !!@current_journey
   end
@@ -46,7 +44,11 @@ class Oystercard
   end
 
   def add_journey(journey)
-    @journeys << {in: journey.entry_station, out: journey.exit_station}
+    @journeys << {
+      in_station: !!journey.entry_station ? {name: journey.entry_station.name, zone: journey.entry_station.zone} : nil, 
+      out_station: !!journey.exit_station ? {name: journey.exit_station.name, zone: journey.exit_station.zone} : nil,
+      fare: journey.calc_fare
+    }
     @current_journey = nil
   end
 end

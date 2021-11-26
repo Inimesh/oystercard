@@ -3,9 +3,11 @@ require 'journey'
 require 'station'
 
 describe Oystercard do
-  let(:journey) {instance_double(Journey)}
-  let(:entry_station) { instance_double(Station) }
-  let(:exit_station) { instance_double(Station) }
+  entry_zone = rand(1..6)
+  exit_zone = rand(1..6)
+  fare = (exit_zone - entry_zone).abs
+  let(:entry_station) {  instance_double(Station, name: "Station 1", zone: entry_zone )  }
+  let(:exit_station) {  instance_double(Station, name: "Station 2", zone: exit_zone )  }
 
   describe '#balance' do
     context 'Oystercard initialized' do
@@ -58,9 +60,8 @@ describe Oystercard do
       it 'deducts the calculated fare' do
         subject.top_up(rand(1..10))
         subject.touch_in(entry_station)
-        # subject.@current_journey = Journey.new(@entry_station = entry_station:double)
 
-        expect { subject.touch_out(exit_station) }.to change(subject, :balance).by(-1)
+        expect { subject.touch_out(exit_station) }.to change(subject, :balance).by(-fare)
       end
     end
 

@@ -1,3 +1,5 @@
+require_relative './station.rb'
+
 class Journey
   attr_reader :entry_station, :exit_station
 
@@ -15,7 +17,8 @@ class Journey
   end
 
   def calc_fare
-    complete?() ? 1 : PENALTY_FARE
+    complete?() ? (@entry_station.zone - @exit_station.zone).abs : PENALTY_FARE
+    
   end
 
   def complete?()

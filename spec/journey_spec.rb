@@ -1,8 +1,9 @@
 require 'journey'
+require 'station'
 
 describe Journey do
-  let(:exit_station) { double :exit_station }
-  let(:entry_station) { double :entry_station }
+  let(:entry_station) { instance_double(Station, name: "Brixton", zone: 1 ) }
+  let(:exit_station) { instance_double(Station, name: "Victoria", zone: 3 ) }
   penalty_fare = Journey::PENALTY_FARE
   
   
@@ -15,13 +16,14 @@ describe Journey do
   describe '#calc_fare' do
     context 'there is a valid entry and exit station' do
       it 'calculates and returns non-penalty fare' do
-
+        
         # subject { described_class.new(entry_station) }
         # does NOT work for some reason??
-
+        
         subject = described_class.new(entry_station)
         subject.finish(exit_station)
-        expect(subject.calc_fare).to eq 1
+        fare = (subject.exit_station.zone - subject.entry_station.zone).abs
+        expect(subject.calc_fare).to eq fare
       end
     end
 
